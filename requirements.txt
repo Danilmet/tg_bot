@@ -1,0 +1,6 @@
+redis
+telebot
+spacy
+transformers
+torch
+torchvision
