@@ -5,8 +5,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipe
 
 BOT_TOKEN = ""
 
-# MODEL_NAME = "./models/multilingual_pretrained"
-MODEL_NAME = "./models/sbert_pretrained"
+MODEL_NAME = "./models/sbert_plus"
 MODEL_TASK = "sentiment-analysis"
 REDIS_HOST = "redis"
 # REDIS_HOST = "localhost"
@@ -67,7 +66,7 @@ def echo_message(message):
             redis_client.delete(message.chat.id)
             return
         else:
-            bot.reply_to(message, "Пожалуйста, напиши свое имя")
+            bot.reply_to(message, "Как тебя зовут?")
             return
     else:
         recognize_result = recognize_text(message.text)

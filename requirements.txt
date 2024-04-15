@@ -4,3 +4,11 @@ spacy
 transformers
 torch
 torchvision
+
+evaluate
+pandas
+scikit-learn
+datasets
+accelerate
+
+pytorch-cuda
