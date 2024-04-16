@@ -5,7 +5,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipe
 
 BOT_TOKEN = ""
 
-MODEL_NAME = "./models/sbert_plus"
+MODEL_NAME = "./models/sbert_plus_multi"
 MODEL_TASK = "sentiment-analysis"
 REDIS_HOST = "redis"
 # REDIS_HOST = "localhost"
@@ -20,7 +20,7 @@ LABEL_MAP = {
 # Загрузка модели для классификации
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME)
-clf = pipeline(task=MODEL_TASK, model=model, tokenizer=tokenizer)
+clf = pipeline(task=MODEL_TASK, model=model, tokenizer=tokenizer, top_k=3)
 
 # Загрузка модели https://spacy.io/models/ru#ru_core_news_sm
 ner = spacy.load(SPACY_MODEL)
@@ -37,6 +37,21 @@ def recognize_text(text):
     result = clf(text)[0]
     print(text, result)
     return LABEL_MAP[result['label']]
+
+
+def multiple_recognize_text(text):
+    result = {}
+    for el in clf(text)[0]:
+        result[LABEL_MAP[el['label']]] = el['score']
+    print(text, result)
+    if result['hay'] > 0.97 and result['greeting'] > 0.97:
+        return 'multi'
+    elif result['greeting'] > result['hay'] and result['greeting'] > result['unknown']:
+        return 'greeting'
+    elif result['hay'] > result['greeting'] and result['hay'] > result['unknown']:
+        return 'hay'
+    else:
+        return 'unknown'
 
 
 # Распознавание имени с помощью https://spacy.io/models/ru#ru_core_news_sm
@@ -69,8 +84,11 @@ def echo_message(message):
             bot.reply_to(message, "Как тебя зовут?")
             return
     else:
-        recognize_result = recognize_text(message.text)
-        if recognize_result == "hay":
+        recognize_result = multiple_recognize_text(message.text)
+        if recognize_result == "multi":
+            bot.send_message(message.chat.id, "И тебе привет, отлично!!")
+            return
+        elif recognize_result == "hay":
             bot.send_message(message.chat.id, "Супер!")
             return
         elif recognize_result == "greeting":
