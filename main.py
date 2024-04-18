@@ -10,6 +10,7 @@ MODEL_TASK = "sentiment-analysis"
 REDIS_HOST = "redis"
 # REDIS_HOST = "localhost"
 SPACY_MODEL = "ru_core_news_sm"
+THRESHOLD = 0.9
 
 LABEL_MAP = {
     'LABEL_0': 'greeting',
@@ -44,7 +45,7 @@ def multiple_recognize_text(text):
     for el in clf(text)[0]:
         result[LABEL_MAP[el['label']]] = el['score']
     print(text, result)
-    if result['hay'] > 0.97 and result['greeting'] > 0.97:
+    if result['hay'] > THRESHOLD and result['greeting'] > THRESHOLD:
         return 'multi'
     elif result['greeting'] > result['hay'] and result['greeting'] > result['unknown']:
         return 'greeting'
