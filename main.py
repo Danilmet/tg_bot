@@ -5,7 +5,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipe
 
 BOT_TOKEN = ""
 
-MODEL_NAME = "./models/sbert_plus_multi"
+MODEL_NAME = "./models/self_multi"
 MODEL_TASK = "sentiment-analysis"
 REDIS_HOST = "redis"
 # REDIS_HOST = "localhost"
